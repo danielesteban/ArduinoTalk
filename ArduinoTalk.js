@@ -37,10 +37,12 @@ var config = require('./config.js'),
 		count : null
 	},
 	emailNotificationsCount = null,
-	FUNC_DIGITALWRITE = 1,
-	FUNC_ANALOGREAD = 2,
-	FUNC_STATS = 3,
-	FUNC_NOTIFICATIONS = 4;
+	FUNC_DIGITALREAD = 1,
+	FUNC_DIGITALWRITE = 2,
+	FUNC_ANALOGREAD = 3,
+	FUNC_STATS = 4,
+	FUNC_NOTIFICATIONS = 5,
+	FUNC_HARDWARETEST = 6;
 
 /* Some lib... */
 function addZero(str) {
@@ -242,6 +244,12 @@ gtalk.on('stanza', function(stanza) {
 			if(m === '\n') return;
 			var argv = optimist.parse(m.split(' '));
 			switch((argv._[0] + '').toLowerCase()) {
+				case 'dr':
+				case 'digitalread':
+					Arduino.req(argv.device || 255, FUNC_DIGITALREAD, new Buffer([parseInt(argv._[1], 10)]), function(data) {
+						message(jid, 'digitalRead(' + argv._[1] + '): ' + (data[0] ? 'HIGH' : 'LOW'));
+					});
+				break;
 				case 'dw':
 				case 'digitalwrite':
 					Arduino.req(argv.device || 255, FUNC_DIGITALWRITE, new Buffer([parseInt(argv._[1], 10), ['1', 'high', 'true'].indexOf((argv._[2] + '').toLowerCase()) !== -1 ? 1 : 0]));
@@ -251,6 +259,9 @@ gtalk.on('stanza', function(stanza) {
 					Arduino.req(argv.device || 255, FUNC_ANALOGREAD, new Buffer([parseInt(argv._[1], 10)]), function(data) {
 						message(jid, 'analogRead(A' + argv._[1] + '): ' + (data[0] + (data[1] << 8)));
 					});
+				break;
+				case 'hardwaretest':
+					Arduino.req(argv.device || 255, FUNC_HARDWARETEST);
 				break;
 				case 'n':
 				case 'notifications':
