@@ -1,0 +1,17 @@
+{
+	"name" : "ArduinoTalk",
+	"description" : "GTalk -> Node.js -> Arduino ... and viceversa ;P",
+	"version" : "0.0.1",
+	"dependencies" : {
+		"arduino" : "git://github.com/danielesteban/node-arduino.git",
+		"sigar" : "git://github.com/duralog/node-sigar.git",
+		"imap" : "latest",
+		"node-xmpp" : "latest",
+		"node-stringprep" : "latest",
+		"optimist" : "latest"
+	},
+	"scripts" : {
+		"start" : "node ArduinoTalk.js"
+	},
+	"engines" : { "node" : ">=0.10.0" }
+}
