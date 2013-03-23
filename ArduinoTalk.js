@@ -140,6 +140,10 @@ setInterval(function() {
 	mem.usedAvg = Math.round(mem.sum / readings);
 }, 1000);
 
+function sendStats(device) {
+	Arduino.req(device, FUNC_STATS, new Buffer([cpu.used, mem.used]));
+}
+
 function sendNotifications(device) {
 	Arduino.req(device, FUNC_NOTIFICATIONS, new Buffer([fbNotifications.count, emailNotificationsCount]));
 }
@@ -198,11 +202,15 @@ gtalk.on('online', function() {
 		c('status').t('')*/
 	);
 
-	/*Arduino.on('req', function(device, func, data) {
+	Arduino.on('req', function(device, func, data) {
 		switch(func) {
-			
+			case FUNC_NOTIFICATIONS:
+				sendNotifications(device);
+			break;
+			case FUNC_STATS:
+				sendStats(device);
 		}
-	});*/
+	});
 
 	Arduino.on('error', function(err) {
 		log(err);
@@ -222,7 +230,7 @@ gtalk.on('online', function() {
 		}, 60000);
 
 		/*setInterval(function() {
-			Arduino.req(255, FUNC_STATS, new Buffer([cpu.used, mem.used]));
+			sendStats(255);
 		}, 1000);*/
 	});
 });
